@@ -20,24 +20,24 @@ namespace ProductManagement.Repositories
         /// </summary>
         /// <param name="categoryAddEdit"></param>
         /// <returns></returns>
-        public Category AddEditCategory(CategoryDetails categoryAddEdit)
+        public bool AddEditCategory(CategoryDetails categoryAddEdit)
         {
             try
             {
-
-                Category category = categoryAddEdit.CategoryId != 0 ? _context.Categories.First(e => e.CategoryId == categoryAddEdit.CategoryId) : new Category();
-                category.CategoryName = categoryAddEdit.CategoryName;
-                category.Sequence = (int)categoryAddEdit.Sequence;
-
-                InsertOrUpdateCategory(category);
-
-                return _context.Categories.First(e=>e.CategoryId == category.CategoryId);
+                Category? category = (categoryAddEdit.CategoryId != null) ? _context.Categories.FirstOrDefault(e => e.CategoryId == categoryAddEdit.CategoryId) : new Category();
+                if(category != null)
+                {
+                    category.CategoryName = categoryAddEdit.CategoryName;
+                    category.Sequence = (int)categoryAddEdit.Sequence;
+                    InsertOrUpdateCategory(category);
+                    return true;
+                }
+                return false;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
         }
         #endregion
 
@@ -69,7 +69,6 @@ namespace ProductManagement.Repositories
 
         }
         #endregion
-
 
         #region Delete Category
         /// <summary>
@@ -113,16 +112,7 @@ namespace ProductManagement.Repositories
         {
             try
             {
-                List<CategoryDetails> data = (from c in _context.Categories
-                                              where !c.DeletedAt.HasValue
-                                              orderby c.Sequence, c.CategoryId ascending
-                                              select new CategoryDetails
-                                              {
-                                                  CategoryId = c.CategoryId,
-                                                  CategoryName = c.CategoryName,
-                                                  TotalProducts = _context.Products.Where(x => x.CategoryId == c.CategoryId).Count(),
-                                                  Sequence = c.Sequence,
-                                              }).ToList();
+                List<CategoryDetails> data = GetCategories();
                 List<CategoryDetails> paginatedData = data.Skip((page - 1) * pageSize).Take(pageSize).ToList();
                 return paginatedData;
             }
@@ -130,31 +120,33 @@ namespace ProductManagement.Repositories
             {
                 throw ex;
             }
-
         }
+        #endregion
+
+        #region Gets all categories count.
+        /// <summary>
+        /// Gets all categories count.
+        /// </summary>
+        /// <returns></returns>
         public int GetAllCategoriesCount()
         {
             try
             {
-                List<CategoryDetails> data = (from c in _context.Categories
-                                              where !c.DeletedAt.HasValue
-                                              orderby c.Sequence, c.CategoryId ascending
-                                              select new CategoryDetails
-                                              {
-                                                  CategoryId = c.CategoryId,
-                                                  CategoryName = c.CategoryName,
-                                                  TotalProducts = _context.Products.Where(x => x.CategoryId == c.CategoryId).Count(),
-                                                  Sequence = c.Sequence,
-                                              }).ToList();
-                
+                List<CategoryDetails> data = GetCategories();
                 return data.Count();
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
         }
+        #endregion
+
+        #region GetCategories
+        /// <summary>
+        /// Gets the categories.
+        /// </summary>
+        /// <returns></returns>
         public List<CategoryDetails> GetCategories()
         {
             try
@@ -176,9 +168,9 @@ namespace ProductManagement.Repositories
             {
                 throw ex;
             }
-
         }
         #endregion
+
         #region GetCategoryDetails for edit category
         /// <summary>
         /// GetCategoryDetails for edit category
@@ -196,14 +188,12 @@ namespace ProductManagement.Repositories
                     CategoryName = categoryDetail.CategoryName,
                     Sequence = categoryDetail.Sequence
                 };
-
                 return data;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
         }
         #endregion
     }

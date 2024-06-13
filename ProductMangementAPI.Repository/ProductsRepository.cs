@@ -157,6 +157,7 @@ namespace ProductManagement.Repositories
                     ProductWebsite = product.ProductWebsite,
                     FilePath = product.FilePath,
                     IsActive = product.IsActive,
+                    AvailableAt = product.AvailableAt,
                     AvailableAtcity = product.AvailableAt.Split(',').Select(int.Parse).ToList()
                 };
                 return productAddEdit;

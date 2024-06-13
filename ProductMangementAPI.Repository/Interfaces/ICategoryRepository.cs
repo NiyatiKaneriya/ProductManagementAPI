@@ -6,7 +6,7 @@ namespace ProductManagement.Repositories.Interfaces
 {
     public interface ICategoryRepository
     {
-        public Category AddEditCategory(CategoryDetails categoryAddEdit);
+        public bool AddEditCategory(CategoryDetails categoryAddEdit);
         public List<CategoryDetails> GetAllCategories(int page, int pageSize);
         public bool DeleteCategory(int categoryId);
         public CategoryDetails GetCategoryDetails(int categoryId);

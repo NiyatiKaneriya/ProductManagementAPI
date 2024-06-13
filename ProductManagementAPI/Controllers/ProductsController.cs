@@ -31,7 +31,7 @@ namespace ProductManagementAPI.Controllers
             }
         }
 
-        [HttpPost("Categoryfilter")]
+        [HttpPost("GetProductByFilter")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<List<ProductDetails>> GetProductByFilter(int Categoryfilter, ProductListParams listParams)
@@ -133,10 +133,11 @@ namespace ProductManagementAPI.Controllers
             }
         }
 
-        [HttpPatch("id")]
+        [HttpPatch]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult JsonPatchWithModelState(int id, JsonPatchDocument<ProductDetails> patchDoc)
+        public ActionResult<Product> JsonPatchWithModelState(int id, JsonPatchDocument<ProductDetails> patchDoc)
         {
             try
             {
@@ -150,8 +151,14 @@ namespace ProductManagementAPI.Controllers
                     return BadRequest();
                 }
                 patchDoc.ApplyTo(product, ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
 
-                return NoContent();
+                _productsRepository.AddEditProduct(product);
+
+                return Ok(product);
             }
             catch (Exception)
             {

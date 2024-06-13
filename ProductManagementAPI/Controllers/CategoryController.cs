@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ProductManagement.Repositories.Interfaces;
 using ProductManagementAPI.Entities.ViewModels;
@@ -11,11 +12,12 @@ namespace ProductManagementAPI.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryRepository _categoryRepository;
-
+       
 
         public CategoryController(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
+            
 
         }
 
@@ -26,6 +28,20 @@ namespace ProductManagementAPI.Controllers
             try
             {
                 return Ok(_categoryRepository.GetCategories());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("getCategoriesWithPaginition")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<CategoryDetails>> GetCategoriesWithPagination(int page, int pageSize)
+        {   
+            try
+            {
+                return Ok(_categoryRepository.GetAllCategories(page,pageSize));
             }
             catch (Exception)
             {
@@ -62,7 +78,7 @@ namespace ProductManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Category> CreateCategory(CategoryDetails category)
+        public ActionResult CreateCategory(CategoryDetails category)
         {
             try
             {
@@ -74,8 +90,8 @@ namespace ProductManagementAPI.Controllers
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError);
                 }
-                Category category1 = _categoryRepository.AddEditCategory(category);
-                return Ok(category1);
+               
+                return Ok(_categoryRepository.AddEditCategory(category));
             }
             catch (Exception)
             {
@@ -87,19 +103,22 @@ namespace ProductManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public ActionResult DeleteCategory(int id)
+        public ActionResult DeleteCategory(int categoryId)
         {
             try
             {
-                if (id == 0)
+                if (categoryId == 0)
                 {
+                    
                     return BadRequest();
                 }
                  
-                if (!_categoryRepository.DeleteCategory(id))
+                if (!_categoryRepository.DeleteCategory(categoryId))
                 {
+                    
                     return StatusCode(StatusCodes.Status409Conflict);
                 }
+              
                 return Ok();
             }
             catch (Exception)
@@ -112,7 +131,7 @@ namespace ProductManagementAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Category> EditCategory(int id, CategoryDetails category)
+        public ActionResult EditCategory(int id, CategoryDetails category)
         {
             try
             {
@@ -122,8 +141,7 @@ namespace ProductManagementAPI.Controllers
                 }
                 if (category.CategoryId > 0)
                 {
-                    Category category1 = _categoryRepository.AddEditCategory(category);
-                    return Ok(category1);
+                    return Ok(_categoryRepository.AddEditCategory(category));
                 }
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
