@@ -24,11 +24,11 @@ namespace ProductManagementAPI.Entities.ViewModels
         public List<int>? AvailableAtcity { get; set; }
         public IFormFile? ProductImage { get; set; }
         public string? FilePath { get; set; }
-        public DateTime? CreatedDate { get; set; }
-        public DateTime? UpdatedDate { get; set; }
-        //public List<ProductDetails> Products { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime UpdatedDate { get; set; }
+        public List<ProductDetails> Products { get; set; }
 
-        public bool? AcendingSort { get; set; }
+        
 
     }
 }

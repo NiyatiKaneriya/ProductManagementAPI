@@ -7,7 +7,7 @@ using ProductManagementAPI.Entity.Models;
 
 namespace ProductManagementAPI.Controllers
 {
-    [Route("api/Category")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
@@ -42,6 +42,21 @@ namespace ProductManagementAPI.Controllers
             try
             {
                 return Ok(_categoryRepository.GetAllCategories(page,pageSize));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<int> GetCategoriesCount()
+        {
+            try
+            {
+                int categoryCount = _categoryRepository.GetAllCategoriesCount();
+                return Ok(categoryCount);
             }
             catch (Exception)
             {

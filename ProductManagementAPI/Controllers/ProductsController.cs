@@ -6,7 +6,7 @@ using ProductManagementAPI.Entity.Models;
 
 namespace ProductManagementAPI.Controllers
 {
-    [Route("api/Products")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
@@ -14,6 +14,36 @@ namespace ProductManagementAPI.Controllers
         public ProductsController(IProductsRepository productsRepository)
         {
             _productsRepository = productsRepository;
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<List<City>> GetCities()
+        {
+            try
+            {
+                List<City> city = _productsRepository.GetCites();
+                return Ok(city);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<int> GetProductsCountWithFilter(ProductListParams listParams)
+        {
+            try
+            {
+                int count = _productsRepository.GetAllProductsCount(listParams);
+                return Ok(count);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         [HttpGet]
@@ -31,10 +61,10 @@ namespace ProductManagementAPI.Controllers
             }
         }
 
-        [HttpPost("GetProductByFilter")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<List<ProductDetails>> GetProductByFilter(int Categoryfilter, ProductListParams listParams)
+        public ActionResult<List<ProductDetails>> GetProductByFilter(ProductListParams listParams)
         {
             try
             {

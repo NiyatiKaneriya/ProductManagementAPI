@@ -13,6 +13,6 @@ namespace ProductManagementAPI.Entities.ViewModels
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set;}
         public DateTime? DeletedAt { get; set; }
-        //public List<CategoryDetails>? Categories { get; set; }
+        public List<CategoryDetails>? Categories { get; set; }
     }
 }
